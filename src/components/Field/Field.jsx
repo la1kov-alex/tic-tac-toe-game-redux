@@ -1,17 +1,18 @@
 import PropTypes from 'prop-types';
 import { FieldLayout } from './FieldLayout';
 
-export const Field = ({ field, handleCellClick, winningCombo }) => {
+export const Field = ({ field, winningCombo, handleCellClick }) => {
 	return (
 		<FieldLayout
 			field={field}
-			handleCellClick={handleCellClick}
 			winningCombo={winningCombo}
+			handleCellClick={handleCellClick}
 		/>
 	);
 };
 
-Field.PropTypes = {
+Field.propTypes = {
 	field: PropTypes.arrayOf(PropTypes.oneOf(['', 'X', '0'])).isRequired,
+	winningCombo: PropTypes.array.isRequired,
 	handleCellClick: PropTypes.func.isRequired,
 };

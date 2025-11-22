@@ -13,3 +13,9 @@ export const PLAYERS = {
 	X: 'X',
 	O: '0',
 };
+
+export const GAME_STATUS = {
+	PLAYING: 'PLAYING',
+	WIN: 'WIN',
+	DRAW: 'DRAW',
+};

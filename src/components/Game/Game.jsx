@@ -1,76 +1,58 @@
-import { useState } from 'react';
-import { PropTypes } from 'prop-types';
+import { useState, useEffect } from 'react';
 import { GameLayout } from './GameLayout';
-import { WIN_PATTERNS, PLAYERS } from '../../constants/game';
+import { store, subscribe, getState } from '../../store';
+import {
+	makeMove,
+	restartGame,
+	selectCurrentPlayer,
+	selectStatus,
+	selectField,
+	selectWinningCombo,
+} from '../../store/gameSlice';
+import { GAME_STATUS } from '../../constants/game';
 
 export const Game = () => {
-	const [currentPlayer, setCurrentPlayer] = useState(PLAYERS.X);
-	const [isGameEnded, setIsGameEnded] = useState(false);
-	const [isDraw, setIsDraw] = useState(false);
-	const [field, setField] = useState(Array(9).fill(''));
-	const [winningCombo, setWinningCombo] = useState([]);
+	const [state, setState] = useState(getState());
 
-	const checkWinner = (currentField) => {
-		for (const pattern of WIN_PATTERNS) {
-			const [a, b, c] = pattern;
-			if (
-				currentField[a] &&
-				currentField[a] === currentField[b] &&
-				currentField[a] === currentField[c]
-			) {
-				setWinningCombo(pattern);
-				return currentField[a];
-			}
-		}
-		setWinningCombo([]);
-		return null;
-	};
-
-	const checkDraw = (currentField) => {
-		return currentField.every((cell) => cell !== '');
-	};
+	useEffect(() => {
+		const unsubscribe = subscribe(() => {
+			setState(getState());
+		});
+		return unsubscribe;
+	}, []);
 
 	const handleCellClick = (index) => {
-		if (isGameEnded || field[index] !== '') return;
-
-		const newField = [...field];
-		newField[index] = currentPlayer;
-		setField(newField);
-
-		const winner = checkWinner(newField);
-		if (winner) {
-			setIsGameEnded(true);
-		} else if (checkDraw(newField)) {
-			setIsDraw(true);
-		} else {
-			setCurrentPlayer(currentPlayer === PLAYERS.X ? PLAYERS.O : PLAYERS.X);
-		}
+		store.dispatch(makeMove(index));
 	};
 
 	const handleRestart = () => {
-		setCurrentPlayer(PLAYERS.X);
-		setIsGameEnded(false);
-		setIsDraw(false);
-		setField(Array(9).fill(''));
-		setWinningCombo([]);
+		store.dispatch(restartGame());
 	};
 
+	const currentPlayer = selectCurrentPlayer(state);
+	const status = selectStatus(state);
+	const field = selectField(state);
+	const winningCombo = selectWinningCombo(state);
+
 	let statusText;
-	if (isDraw) {
-		statusText = 'Ничья';
-	} else if (isGameEnded) {
-		statusText = `Победа: ${currentPlayer}`;
-	} else {
-		statusText = `Ходит: ${currentPlayer}`;
+	switch (status) {
+		case GAME_STATUS.WIN:
+			statusText = `Победа: ${currentPlayer}`;
+			break;
+		case GAME_STATUS.DRAW:
+			statusText = `Ничья`;
+			break;
+		default:
+			statusText = `Ходит ${currentPlayer}`;
 	}
 
 	return (
 		<GameLayout
 			statusText={statusText}
 			field={field}
+			winningCombo={winningCombo}
 			handleCellClick={handleCellClick}
 			handleRestart={handleRestart}
-			winningCombo={winningCombo}
 		/>
 	);
 };
