@@ -1,58 +1,25 @@
 import { useState, useEffect } from 'react';
-import { GameLayout } from './GameLayout';
-import { store, subscribe, getState } from '../../store';
-import {
-	makeMove,
-	restartGame,
-	selectCurrentPlayer,
-	selectStatus,
-	selectField,
-	selectWinningCombo,
-} from '../../store/gameSlice';
-import { GAME_STATUS } from '../../constants/game';
+import GameLayout from './GameLayout';
+import store, { setRenderCallback } from '../../store';
 
-export const Game = () => {
-	const [state, setState] = useState(getState());
+const Game = () => {
+	const [_, forceUpdate] = useState({});
 
 	useEffect(() => {
-		const unsubscribe = subscribe(() => {
-			setState(getState());
+		setRenderCallback(() => {
+			forceUpdate({});
 		});
-		return unsubscribe;
+
+		return () => {
+			setRenderCallback(null);
+		};
 	}, []);
 
-	const handleCellClick = (index) => {
-		store.dispatch(makeMove(index));
-	};
-
 	const handleRestart = () => {
-		store.dispatch(restartGame());
+		store.dispatch({ type: 'RESTART_GAME' });
 	};
 
-	const currentPlayer = selectCurrentPlayer(state);
-	const status = selectStatus(state);
-	const field = selectField(state);
-	const winningCombo = selectWinningCombo(state);
-
-	let statusText;
-	switch (status) {
-		case GAME_STATUS.WIN:
-			statusText = `Победа: ${currentPlayer}`;
-			break;
-		case GAME_STATUS.DRAW:
-			statusText = `Ничья`;
-			break;
-		default:
-			statusText = `Ходит ${currentPlayer}`;
-	}
-
-	return (
-		<GameLayout
-			statusText={statusText}
-			field={field}
-			winningCombo={winningCombo}
-			handleCellClick={handleCellClick}
-			handleRestart={handleRestart}
-		/>
-	);
+	return <GameLayout handleRestart={handleRestart} />;
 };
+
+export default Game;

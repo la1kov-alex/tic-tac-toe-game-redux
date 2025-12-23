@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import styles from './Field.module.css';
 
-export const FieldLayout = ({ field, winningCombo, handleCellClick }) => {
+const FieldLayout = ({ field, winningCombo, handleCellClick }) => {
 	const getCellClassName = (cell, index) => {
 		const baseClass = styles.cell;
 		const isWinning = winningCombo.includes(index);
@@ -36,3 +36,5 @@ FieldLayout.propTypes = {
 	winningCombo: PropTypes.array.isRequired,
 	handleCellClick: PropTypes.func.isRequired,
 };
+
+export default FieldLayout;

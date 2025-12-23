@@ -1,7 +1,25 @@
-import PropTypes from 'prop-types';
-import { FieldLayout } from './FieldLayout';
+import store from '../../store';
+import {
+	selectField,
+	selectWinningCombo,
+	selectIsGameActive,
+} from '../../store/selectors';
+import { makeMove } from '../../store/actions';
+import FieldLayout from './FieldLayout';
 
-export const Field = ({ field, winningCombo, handleCellClick }) => {
+const Field = () => {
+	const state = store.getState();
+	const field = selectField(state);
+	const winningCombo = selectWinningCombo(state);
+	const isGameActive = selectIsGameActive(state);
+
+	const handleCellClick = (index) => {
+		if (!isGameActive || field[index] !== '') {
+			return;
+		}
+		store.dispatch(makeMove(index));
+	};
+
 	return (
 		<FieldLayout
 			field={field}
@@ -11,8 +29,4 @@ export const Field = ({ field, winningCombo, handleCellClick }) => {
 	);
 };
 
-Field.propTypes = {
-	field: PropTypes.arrayOf(PropTypes.oneOf(['', 'X', '0'])).isRequired,
-	winningCombo: PropTypes.array.isRequired,
-	handleCellClick: PropTypes.func.isRequired,
-};
+export default Field;

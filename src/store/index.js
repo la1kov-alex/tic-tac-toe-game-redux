@@ -1,27 +1,21 @@
 import { createStore } from 'redux';
-import { gameReducer } from './gameSlice';
+import { gameReducer } from './reducers';
 
-export const store = createStore(gameReducer, window.__REDUX_DEVTOOLS_EXTENSION__?.());
-
-let subscribers = [];
-
-export const subscribe = (callback) => {
-	subscribers.push(callback);
-
-	return () => {
-		subscribers = subscribers.filter((sub) => sub !== callback);
-	};
-};
-
-export const notifySubscribers = () => {
-	subscribers.forEach((callback) => callback());
-};
+const store = createStore(gameReducer, window.__REDUX_DEVTOOLS_EXTENSION__?.());
 
 const originalDispatch = store.dispatch;
+let renderCallback = null;
+
 store.dispatch = (action) => {
 	const result = originalDispatch(action);
-	notifySubscribers();
+	if (renderCallback) {
+		renderCallback();
+	}
 	return result;
 };
 
-export const getState = () => store.getState();
+export const setRenderCallback = (callback) => {
+	renderCallback = callback;
+};
+
+export default store;

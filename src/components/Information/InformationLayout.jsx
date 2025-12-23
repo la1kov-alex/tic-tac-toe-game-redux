@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import styles from './Information.module.css';
 
-export const InformationLayout = ({ statusText }) => {
+const InformationLayout = ({ statusText }) => {
 	return (
 		<div className={styles.information}>
 			<h2 className={styles.status} key={statusText}>
@@ -11,6 +11,8 @@ export const InformationLayout = ({ statusText }) => {
 	);
 };
 
-InformationLayout.PropTypes = {
+InformationLayout.propTypes = {
 	statusText: PropTypes.string.isRequired,
 };
+
+export default InformationLayout;

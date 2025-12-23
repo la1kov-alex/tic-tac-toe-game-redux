@@ -19,3 +19,8 @@ export const GAME_STATUS = {
 	WIN: 'WIN',
 	DRAW: 'DRAW',
 };
+
+export const ACTION_TYPES = {
+	MAKE_MOVE: 'MAKE_MOVE',
+	RESTART_GAME: 'RESTART_GAME',
+};

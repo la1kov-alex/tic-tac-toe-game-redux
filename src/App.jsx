@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
-import { Game } from './components/Game/Game';
+import Game from './components/Game/Game';
 import './index.css';
 
-export function App() {
+function App() {
 	return (
 		<StrictMode>
 			<div className="app">
@@ -11,3 +11,5 @@ export function App() {
 		</StrictMode>
 	);
 }
+
+export default App;
